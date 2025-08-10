@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* [Your existing CSS unchanged] */
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .customer-info {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .customer-info p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    form {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    form select, form input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      flex: 1 1 120px;
+    }
+    form button {
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    form button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+    .summary {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+    .no-payments {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Customer Payment Details</h1>
+
+<div class="customer-info" id="customerInfo"></div>
+
+<form id="addPaymentForm">
+  <select id="paymentMonth" required>
+    <option value="">Select Month</option>
+  </select>
+  <select id="paymentYear" required>
+    <option value="">Select Year</option>
+  </select>
+  <input type="number" id="paymentAmount" placeholder="Payment Amount (₹)" min="1" required />
+  <button type="submit">Add Payment</button>
+</form>
+
+<div id="paymentsContainer"></div>
+
+<script>
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const paymentMonth = document.getElementById('paymentMonth');
+  const paymentYear = document.getElementById('paymentYear');
+  const customerInfoDiv = document.getElementById('customerInfo');
+  const paymentsContainer = document.getElementById('paymentsContainer');
+  const addPaymentForm = document.getElementById('addPaymentForm');
+
+  // Populate dropdowns
+  monthNames.forEach((name, i) => {
+    const option = document.createElement('option');
+    option.value = i + 1;
+    option.textContent = name;
+    paymentMonth.appendChild(option);
+  });
+
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= currentYear - 5; y--) {
+    const option = document.createElement('option');
+    option.value = y;
+    option.textContent = y;
+    paymentYear.appendChild(option);
+  }
+
+  // Load customer and payments
+  const boxno = new URLSearchParams(window.location.search).get('boxno');
+  const allCustomers = JSON.parse(localStorage.getItem('customers')) || [];
+  let allPayments = JSON.parse(localStorage.getItem('customerPayments')) || {};
+  const customer = allCustomers.find(c => c.boxno === boxno);
+
+  if (!boxno || !customer) {
+    customerInfoDiv.innerHTML = `<p style="color:red; text-align:center;">Customer not found or not selected.</p>`;
+    addPaymentForm.style.display = 'none';
+  } else {
+    customerInfoDiv.innerHTML = `
+      <p><strong>Name:</strong> ${customer.name}</p>
+      <p><strong>Box Number:</strong> ${customer.boxno}</p>
+      <p><strong>Mobile:</strong> ${customer.mobile}</p>
+      <p><strong>Monthly Amount:</strong> ₹${customer.amount}</p>
+    `;
+    showPayments(boxno);
+  }
+
+  addPaymentForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const month = parseInt(paymentMonth.value);
+    const year = parseInt(paymentYear.value);
+    const amount = Number(document.getElementById('paymentAmount').value);
+
+    if (!month || !year || !amount || amount <= 0) {
+      alert('Please fill all payment details correctly.');
+      return;
+    }
+
+    if (!allPayments[boxno]) {
+      allPayments[boxno] = [];
+    }
+
+    const existingIndex = allPayments[boxno].findIndex(p => p.month === month && p.year === year);
+    if (existingIndex > -1) {
+      allPayments[boxno][existingIndex].amount += amount;
+      allPayments[boxno][existingIndex].date = new Date().toISOString();
+    } else {
+      allPayments[boxno].push({
+        month,
+        year,
+        amount,
+        date: new Date().toISOString()
+      });
+    }
+
+    localStorage.setItem('customerPayments', JSON.stringify(allPayments));
+    alert(`Payment of ₹${amount} added successfully!`);
+    addPaymentForm.reset();
+    showPayments(boxno);
+  });
+
+  function showPayments(boxno) {
+    const customerPayments = allPayments[boxno] || [];
+
+    if (customerPayments.length === 0) {
+      paymentsContainer.innerHTML = `<p class="no-payments">No payments found for this customer.</p>`;
+      return;
+    }
+
+    customerPayments.sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
+
+    const monthlyAmount = Number(customer.amount);
+    const grouped = {};
+
+    customerPayments.forEach(p => {
+      const key = `${p.year}-${p.month}`;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(p);
+    });
+
+    const orderedKeys = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
+    let carryOver = 0;
+    let grandTotal = 0;
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>Month-Year</th>
+            <th>Date</th>
+            <th>Paid ₹</th>
+            <th>Carry Over ₹</th>
+            <th>Balance ₹</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    orderedKeys.forEach(key => {
+      const group = grouped[key];
+      const [year, month] = key.split("-");
+      const totalPaid = group.reduce((sum, p) => sum + Number(p.amount), 0);
+      const effectiveMonthly = monthlyAmount - carryOver;
+      const balance = effectiveMonthly - totalPaid;
+      grandTotal += totalPaid;
+
+      group.forEach((p, i) => {
+        const dateAdded = new Date(p.date).toLocaleDateString();
+        html += `
+          <tr>
+            ${i === 0 ? `<td rowspan="${group.length}">${new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}</td>` : ''}
+            <td>${dateAdded}</td>
+            <td>₹${Number(p.amount).toFixed(2)}</td>
+            ${i === 0 ? `
+              <td rowspan="${group.length}">₹${carryOver.toFixed(2)}</td>
+              <td rowspan="${group.length}">₹${balance.toFixed(2)}</td>
+            ` : ''}
+          </tr>
+        `;
+      });
+
+      carryOver = balance < 0 ? Math.abs(balance) : 0;
+    });
+
+    html += `</tbody></table>`;
+    html += `<div class="summary">Total Paid: ₹${grandTotal.toFixed(2)}</div>`;
+    paymentsContainer.innerHTML = html;
+  }
+</script>
+
+</body>
+</html>

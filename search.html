@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .customer-card {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .customer-info {
+      font-size: 16px;
+    }
+    .view-button {
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .view-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>All Customers</h1>
+
+  <div id="customerList"></div>
+
+  <script>
+    const customerListDiv = document.getElementById('customerList');
+    const customers = JSON.parse(localStorage.getItem('customers')) || [];
+
+    if (customers.length === 0) {
+      customerListDiv.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+    } else {
+      customers.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'customer-card';
+        card.innerHTML = `
+          <div class="customer-info">
+            <strong>${c.name}</strong><br>
+            Box No: ${c.boxno}
+          </div>
+          <a class="view-button" href="payment.html?boxno=${c.boxno}">View</a>
+        `;
+        customerListDiv.appendChild(card);
+      });
+    }
+  </script>
+
+</body>
+</html>

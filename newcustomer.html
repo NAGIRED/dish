@@ -149,12 +149,42 @@
     </form>
   </div>
 
-  <script>
-    function handleSubmit(event) {
-      event.preventDefault(); // Prevent actual form submission
-      alert('Customer submitted!');
+<script>
+  function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+
+    // Get existing customers from localStorage
+    const customers = JSON.parse(localStorage.getItem('customers')) || [];
+
+    // Create new customer object
+    const customer = {
+      name: form.name.value.trim(),
+      boxno: form.boxno.value.trim(),
+      address: form.address.value.trim(),
+      mobile: form.mobile.value.trim(),
+      center: form.center.value.trim(),
+      amount: form.amount.value.trim()
+    };
+
+    // Check for duplicate box number
+    const isDuplicate = customers.some(c => c.boxno === customer.boxno);
+    if (isDuplicate) {
+      alert('Box Number already exists! Please use a unique box number.');
+      return;
     }
-  </script>
+
+    // Add customer and save
+    customers.push(customer);
+    localStorage.setItem('customers', JSON.stringify(customers));
+
+    alert('Customer saved successfully!');
+    window.location.href = 'customer.html'; // Or whatever your list page is
+
+    form.reset();
+  }
+</script>
+
 
 </body>
 </html>

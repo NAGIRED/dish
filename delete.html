@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delete Customers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .customer-card {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .customer-info {
+      font-size: 16px;
+    }
+    .delete-button {
+      padding: 8px 12px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .delete-button:hover {
+      background-color: #b02a37;
+    }
+    .deleted-history {
+      margin-top: 40px;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .deleted-history h2 {
+      margin-top: 0;
+    }
+    .deleted-item {
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Delete Customers</h1>
+
+<div id="customerList"></div>
+
+<div class="deleted-history" id="deletedHistory">
+  <h2>Deleted Customers History</h2>
+  <div id="deletedList"></div>
+</div>
+
+<script>
+  const customerListDiv = document.getElementById('customerList');
+  const deletedListDiv = document.getElementById('deletedList');
+
+  // Load customers and deleted items from localStorage
+  let customers = JSON.parse(localStorage.getItem('customers')) || [];
+  let deletedCustomers = JSON.parse(localStorage.getItem('deletedCustomers')) || [];
+
+  function renderCustomers() {
+    customerListDiv.innerHTML = '';
+    if (customers.length === 0) {
+      customerListDiv.innerHTML = `<p style="text-align:center;">No customers found.</p>`;
+      return;
+    }
+    customers.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'customer-card';
+      card.innerHTML = `
+        <div class="customer-info">
+          <strong>${c.name}</strong><br>
+          Box No: ${c.boxno}
+        </div>
+        <button class="delete-button" data-boxno="${c.boxno}">Delete</button>
+      `;
+      customerListDiv.appendChild(card);
+    });
+
+    // Attach delete button listeners
+    document.querySelectorAll('.delete-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const boxno = button.getAttribute('data-boxno');
+        deleteCustomer(boxno);
+      });
+    });
+  }
+
+  function renderDeletedHistory() {
+    deletedListDiv.innerHTML = '';
+    if (deletedCustomers.length === 0) {
+      deletedListDiv.innerHTML = '<p style="text-align:center; color: #666;">No deleted customers yet.</p>';
+      return;
+    }
+    deletedCustomers.forEach(dc => {
+      const div = document.createElement('div');
+      div.className = 'deleted-item';
+      const deletedAt = new Date(dc.deletedAt).toLocaleString();
+      div.textContent = `${dc.name} (Box No: ${dc.boxno}) — Deleted at: ${deletedAt}`;
+      deletedListDiv.appendChild(div);
+    });
+  }
+
+  // function deleteCustomer(boxno) {
+  //   const index = customers.findIndex(c => c.boxno === boxno);
+  //   if (index === -1) {
+  //     alert('Customer not found!');
+  //     return;
+  //   }
+  //   // Remove from customers
+  //   const [deletedCustomer] = customers.splice(index, 1);
+
+  //   // Add deletion timestamp
+  //   deletedCustomer.deletedAt = new Date().toISOString();
+
+  //   // Add to deleted customers history
+  //   deletedCustomers.push(deletedCustomer);
+
+  //   // Save back to localStorage
+  //   localStorage.setItem('customers', JSON.stringify(customers));
+  //   localStorage.setItem('deletedCustomers', JSON.stringify(deletedCustomers));
+
+  //   alert(`Deleted customer "${deletedCustomer.name}" successfully.`);
+
+  //   renderCustomers();
+  //   renderDeletedHistory();
+  // }
+
+  // Initial render
+  renderCustomers();
+  renderDeletedHistory();
+</script>
+
+</body>
+</html>
