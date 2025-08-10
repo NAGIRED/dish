@@ -1,170 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Homepage</title>
-  <style>
-   
- * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
- 
-    /* homepage */
-    .homepage {
-      position: relative;
-      width: 412px;
-      height: 917px;
-      background: #2E5867;
-      font-family: 'Lemon', sans-serif;
-    }
-
-    .button {
-  position: absolute;
-  width: 300px;
-  height: 80px;
-  background: #D9D9D9;
-  border-radius: 10px;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  display: block;
-}
-
-.icon {
-  position: absolute;
-  width: 59px;
-  height: 50px;
-  border-radius: 50px;
-  background-size: cover;
-  background-position: center;
-}
-
-.label {
-  position: absolute;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 31px;
-  color: #000000;
-  font-family: 'Lemon', sans-serif;
-}
-  .header {
-      background-color: #64AD8F;
-      padding: 30px 20px;
-      text-align: center;
-      border-radius: 0 0 30px 30px;
-    }
-
-    .header h1 {
-      font-family: 'Lemon', sans-serif;
-      font-size: 28px;
-      color: white;
-    }
-
-/* Button positions and their inner elements */
-
-.customer-button { top: 50px; left: 56px; }
-.customer-icon { top: 15px; left: 12px; background-image: url('viewlogo.png'); }
-.customer-label { top: 25px; left: 144px; }
-
-.add-customer-button { top: 160px; left: 56px; }
-.add-customer-icon { top: 15px; left: 12px; background-image: url('add customer.png'); }
-.add-customer-label { top: 15px; left: 100px; }
-
-.collect-button { top: 270px; left: 56px; }
-.collect-icon { top: 15px; left: 12px; background-image: url('collect.png'); }
-.collect-label { top: 25px; left: 144px; }
-
-.center-button { top: 380px; left: 56px; }
-.center-icon { top: 15px; left: 12px; background-image: url('center.png'); }
-.center-label { top: 25px; left: 144px; }
-
-.payment-button { top: 490px; left: 56px; }
-.payment-icon { top: 15px; left: 12px; background-image: url('payment.png'); }
-.payment-label { top: 25px; left: 144px; }
-
-.search-button { top: 600px; left: 56px; }
-.search-icon { top: 15px; left: 12px; background-image: url('secarch.png'); }
-.search-label { top: 25px; left: 144px; }
-
-.delete-button { top: 710px; left: 56px; }
-.delete-icon { top: 15px; left: 12px; background-image: url('delete.png'); }
-.delete-label { top: 25px; left: 144px; }
-
-
-
-  </style>
-  <link href="https://fonts.googleapis.com/css2?family=Lemon&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dish TV App - Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Lemon&display=swap" rel="stylesheet" />
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Lemon', cursive, sans-serif;
+    background-color: #2E5867;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    color: #000;
+  }
+  .app-container {
+    width: 100%;
+    max-width: 420px;
+    background: #2E5867;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+  }
+  header {
+    background-color: #64AD8F;
+    padding: 30px 0;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    box-shadow: inset 0 -5px 10px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    font-size: 32px;
+    color: white;
+    margin: 0;
+    letter-spacing: 2px;
+  }
+  main {
+    flex-grow: 1;
+    padding: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  button {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #D9D9D9;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 25px;
+    font-size: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  button:hover,
+  button:focus {
+    background-color: #B0C4A1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    outline: none;
+  }
+  .icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .customer-icon { background-image: url('viewlogo.png'); }
+  .add-customer-icon { background-image: url('add customer.png'); }
+  .collect-icon { background-image: url('collect.png'); }
+  .center-icon { background-image: url('center.png'); }
+  .payment-icon { background-image: url('payment.png'); }
+  .search-icon { background-image: url('secarch.png'); }
+  .delete-icon { background-image: url('delete.png'); }
+</style>
 </head>
 <body>
- 
-   
-    <div class="header">
-      <h1>Dish Tv App</h1>
-    </div>
-  <div class="homepage">
-    
-  <!-- Customer Button -->
-<button class="button customer-button" data-link="customer.html">
-  <div class="icon customer-icon"></div>
-  <span class="label customer-label">Customer</span>
-</button>
-
-<!-- Add Customer Button -->
-<button class="button add-customer-button" data-link="newcustomer.html">
-  <div class="icon add-customer-icon"></div>
-  <span class="label add-customer-label">New Customer</span>
-</button>
-
-<!-- Collect Button -->
-<button class="button collect-button" data-link="collect.html">
-  <div class="icon collect-icon"></div>
-  <span class="label collect-label">Collect</span>
-</button>
-
-<!-- Center Button -->
-<button class="button center-button" data-link="center.html">
-  <div class="icon center-icon"></div>
-  <span class="label center-label">Center</span>
-</button>
-
-<!-- Payment Button -->
-<button class="button payment-button" data-link="payment.html">
-  <div class="icon payment-icon"></div>
-  <span class="label payment-label">Payment</span>
-</button>
-
-<!-- Search Button -->
-<button class="button search-button" data-link="search.html">
-  <div class="icon search-icon"></div>
-  <span class="label search-label">Search</span>
-</button>
-
-<!-- Delete Button -->
-<button class="button delete-button" data-link="delete.html">
-  <div class="icon delete-icon"></div>
-  <span class="label delete-label">Delete</span>
-</button>
-
- 
+  <div class="app-container" role="main" aria-label="Dish TV App Homepage">
+    <header>
+      <h1>Dish TV App</h1>
+    </header>
+    <main>
+      <button type="button" data-link="customer.html" aria-label="Go to Customer page">
+        <div class="icon customer-icon" aria-hidden="true"></div>
+        Customer
+      </button>
+      <button type="button" data-link="newcustomer.html" aria-label="Add New Customer">
+        <div class="icon add-customer-icon" aria-hidden="true"></div>
+        New Customer
+      </button>
+      <button type="button" data-link="collect.html" aria-label="Collect Payments">
+        <div class="icon collect-icon" aria-hidden="true"></div>
+        Collect
+      </button>
+      <button type="button" data-link="center.html" aria-label="Center Information">
+        <div class="icon center-icon" aria-hidden="true"></div>
+        Center
+      </button>
+      <button type="button" data-link="payment.html" aria-label="Make Payment">
+        <div class="icon payment-icon" aria-hidden="true"></div>
+        Payment
+      </button>
+      <button type="button" data-link="search.html" aria-label="Search">
+        <div class="icon search-icon" aria-hidden="true"></div>
+        Search
+      </button>
+      <button type="button" data-link="delete.html" aria-label="Delete Records">
+        <div class="icon delete-icon" aria-hidden="true"></div>
+        Delete
+      </button>
+    </main>
   </div>
-<script>
-  const buttons = document.querySelectorAll('.button');
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      const link = button.getAttribute('data-link');
-      if (link) {
-        window.location.href = link;
-      }
+<script>
+  document.querySelectorAll('button[data-link]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.location.href = btn.getAttribute('data-link');
     });
   });
 </script>
-
-
 </body>
 </html>
