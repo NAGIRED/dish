@@ -204,6 +204,27 @@
       background-color: #c0392b;
       outline: none;
     }
+    .back-button {
+      background-color: #529d7f;
+      margin: 20px auto;
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      padding: 14px 0;
+      border: none;
+      border-radius: 25px;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(82,157,127,0.7);
+      transition: background-color 0.3s ease;
+      font-family: 'Lemon', cursive, sans-serif;
+      text-align: center;
+      text-decoration: none;
+    }
+    .back-button:hover {
+      background-color: #42745f;
+    }
   </style>
 </head>
 <body>
@@ -217,6 +238,7 @@
       <h2>Deleted Customers History</h2>
       <div id="deletedList"></div>
     </section>
+     <button class="back-button" onclick="location.href='home.html'">← Back to Home</button>
   </div>
 
   <!-- Confirmation Modal -->
@@ -226,6 +248,7 @@
       <button class="btn-cancel" id="cancelBtn">Cancel</button>
       <button class="btn-delete" id="confirmBtn">Delete</button>
     </div>
+      
   </div>
 
   <script>
