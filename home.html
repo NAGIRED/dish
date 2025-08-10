@@ -66,6 +66,18 @@
   color: #000000;
   font-family: 'Lemon', sans-serif;
 }
+  .header {
+      background-color: #64AD8F;
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+    }
+
+    .header h1 {
+      font-family: 'Lemon', sans-serif;
+      font-size: 28px;
+      color: white;
+    }
 
 /* Button positions and their inner elements */
 
@@ -104,6 +116,10 @@
 </head>
 <body>
  
+  <div class="container">
+    <div class="header">
+      <h1>Dish Tv App</h1>
+    </div>
   <div class="homepage">
     
   <!-- Customer Button -->
@@ -148,7 +164,7 @@
   <span class="label delete-label">Delete</span>
 </button>
 
- 
+  </div>
   </div>
 <script>
   const buttons = document.querySelectorAll('.button');
