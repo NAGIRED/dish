@@ -202,42 +202,60 @@
        <button class="back-button" onclick="location.href='home.html'">← Back to Home</button>
     </form>
   </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    function handleSubmit(event) {
-      event.preventDefault();
-      const form = event.target;
+    const firebaseConfig = {
+    apiKey: "AIzaSyDVyFqdJ4rGMv9-EpZsrYmOd6qR-6H2ixc",
+    authDomain: "myfirst-c505a.firebaseapp.com",
+    databaseURL: "https://myfirst-c505a-default-rtdb.firebaseio.com",
+    projectId: "myfirst-c505a",
+    storageBucket: "myfirst-c505a.appspot.com",
+    messagingSenderId: "326628597182",
+    appId: "1:326628597182:web:24c86ced16a1db69c5adef",
+    measurementId: "G-TCBHV1QHMG"
+  };
 
-      // Get existing customers from localStorage
-      const customers = JSON.parse(localStorage.getItem('customers')) || [];
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
-      // Create new customer object
-      const customer = {
-        name: form.name.value.trim(),
-        boxno: form.boxno.value.trim(),
-        address: form.address.value.trim(),
-        mobile: form.mobile.value.trim(),
-        center: form.center.value.trim(),
-        amount: form.amount.value.trim()
-      };
+  // Reference to customers collection
+  const customersRef = firebase.database().ref("customers");
+      async function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
 
-      // Check for duplicate box number
-      const isDuplicate = customers.some(c => c.boxno === customer.boxno);
-      if (isDuplicate) {
-        alert('Box Number already exists! Please use a unique box number.');
-        return;
-      }
+    const customer = {
+      name: form.name.value.trim(),
+      boxno: form.boxno.value.trim(),
+      address: form.address.value.trim(),
+      mobile: form.mobile.value.trim(),
+      center: form.center.value.trim(),
+      amount: form.amount.value.trim()
+    };
 
-      // Add customer and save
-      customers.push(customer);
-      localStorage.setItem('customers', JSON.stringify(customers));
-
-      alert('Customer saved successfully!');
-      window.location.href = 'customer.html'; // Or your customer list page
-
-      form.reset();
+    // Check for duplicate boxno in Firebase
+    const snapshot = await customersRef.orderByChild("boxno").equalTo(customer.boxno).once("value");
+    if (snapshot.exists()) {
+      alert('Box Number already exists! Please use a unique box number.');
+      return;
     }
+
+    // Save to Firebase
+    customersRef.push(customer, function(error) {
+      if (error) {
+        alert("Error saving customer: " + error.message);
+      } else {
+        alert("Customer saved successfully!");
+        window.location.href = "customer.html";
+      }
+    });
+
+    form.reset();
+  }
   </script>
 
 </body>
 </html>
+
