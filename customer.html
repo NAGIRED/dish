@@ -161,78 +161,100 @@
 
     <button class="back-button" onclick="location.href='home.html'">← Back to Home</button>
   </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    const customerList = document.getElementById('customerList');
-    let customers = JSON.parse(localStorage.getItem('customers')) || [];
+    const firebaseConfig = {
+    apiKey: "AIzaSyD80rGSiaQD5PiFQfZokB7QueEEyORD57w",
+    authDomain: "new-customer-e3c48.firebaseapp.com",
+    projectId: "new-customer-e3c48",
+    storageBucket: "new-customer-e3c48.firebasestorage.app",
+    messagingSenderId: "76725814081",
+    appId: "1:76725814081:web:147cfb331c786efbec17c0"
+  };
 
-    function saveCustomers() {
-      localStorage.setItem('customers', JSON.stringify(customers));
-    }
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
-    function renderCustomers() {
-      customerList.innerHTML = '';
-
-      if (customers.length === 0) {
-        customerList.innerHTML = '<p style="color:#fff; text-align:center; font-size:18px;">No customers found.</p>';
-        return;
-      }
-
-      customers.forEach((customer, index) => {
-        const card = document.createElement('article');
-        card.className = 'customer-card';
-
-       
-
-        card.innerHTML = `
-          <h2>
-            ${customer.name}
-           
-          </h2>
-          <p>
-            <strong>Box No:</strong> ${customer.boxno}<br>
-            <strong>Address:</strong> ${customer.address}<br>
-            <strong>Mobile:</strong> ${customer.mobile}<br>
-            <strong>Center:</strong> ${customer.center}<br>
-            <strong>Amount:</strong> ₹${customer.amount}
-          </p>
-          <div class="actions">
-            <button aria-label="Edit customer ${customer.name}" onclick="editCustomer(${index})">✏️ Edit</button>
-          
-            <button aria-label="View payment details for ${customer.name}" onclick="openPaymentDetails('${customer.boxno}')">💳 Payment Details</button>
-          </div>
-        `;
-
-        customerList.appendChild(card);
-      });
-    }
-
-    function openPaymentDetails(boxno) {
-      window.location.href = `payment.html?boxno=${encodeURIComponent(boxno)}`;
-    }
-
+  // Reference to customers collection
+  const customersRef = firebase.database().ref("customers");
    
+  const customerList = document.getElementById('customerList');
+  let customers = [];
 
-    function editCustomer(index) {
-      const customer = customers[index];
-      const name = prompt("Edit Name:", customer.name);
-      const boxno = prompt("Edit Box No:", customer.boxno);
-      const address = prompt("Edit Address:", customer.address);
-      const mobile = prompt("Edit Mobile No:", customer.mobile);
-      const center = prompt("Edit Center:", customer.center);
-      const amount = prompt("Edit Amount:", customer.amount);
-
-      if (name && boxno && address && mobile && center && amount) {
-        customers[index] = { ...customer, name, boxno, address, mobile, center, amount };
-        saveCustomers();
-        renderCustomers();
-      } else {
-        alert("All fields are required.");
-      }
-    }
-
-    // Initial render
+  // Fetch from Firebase
+  customersRef.once("value", (snapshot) => {
+    customers = [];
+    snapshot.forEach((childSnapshot) => {
+      customers.push({ id: childSnapshot.key, ...childSnapshot.val() });
+    });
     renderCustomers();
+  });
+
+
+  function renderCustomers() {
+  customerList.innerHTML = '';
+
+  if (customers.length === 0) {
+    customerList.innerHTML = '<p style="color:#fff; text-align:center; font-size:18px;">No customers found.</p>';
+    return;
+  }
+
+  customers.forEach((customer, index) => {
+    const card = document.createElement('article');
+    card.className = 'customer-card';
+
+    card.innerHTML = `
+      <h2>
+        ${customer.name}
+      </h2>
+      <p>
+        <strong>Box No:</strong> ${customer.boxno}<br>
+        <strong>Address:</strong> ${customer.address}<br>
+        <strong>Mobile:</strong> ${customer.mobile}<br>
+        <strong>Center:</strong> ${customer.center}<br>
+        <strong>Amount:</strong> ₹${customer.amount}
+      </p>
+      <div class="actions">
+        <button aria-label="Edit customer ${customer.name}" onclick="editCustomer('${customer.id}')">✏️ Edit</button>
+        <button aria-label="View payment details for ${customer.name}" onclick="openPaymentDetails('${customer.boxno}')">💳 Payment Details</button>
+      </div>
+    `;
+
+    customerList.appendChild(card);
+  });
+}
+function openPaymentDetails(boxno){
+  window.location.href = `payment.html?boxno=${boxno}`;
+}
+
+function editCustomer(customerId) {
+  const customer = customers.find(c => c.id === customerId);
+  if (!customer) return;
+
+  const name = prompt("Edit Name:", customer.name);
+  const boxno = prompt("Edit Box No:", customer.boxno);
+  const address = prompt("Edit Address:", customer.address);
+  const mobile = prompt("Edit Mobile No:", customer.mobile);
+  const center = prompt("Edit Center:", customer.center);
+  const amount = prompt("Edit Amount:", customer.amount);
+
+  if (name && boxno && address && mobile && center && amount) {
+    const updatedCustomer = { name, boxno, address, mobile, center, amount };
+    firebase.database().ref(`customers/${customerId}`).set(updatedCustomer, (error) => {
+      if (error) {
+        alert("Update failed: " + error.message);
+      } else {
+        alert("Customer updated successfully!");
+        location.reload();
+      }
+    });
+  } else {
+    alert("All fields are required.");
+  }
+}
+
   </script>
 </body>
 </html>

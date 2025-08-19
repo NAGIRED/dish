@@ -4,263 +4,260 @@
   <meta charset="UTF-8" />
   <title>Payment Details</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Lemon&display=swap" rel="stylesheet" />
   <style>
-    /* [Your existing CSS unchanged] */
     body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
+      margin: 0;
+      font-family: 'Lemon', cursive, sans-serif;
+      background-color: #2E5867;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
-      background: #f7f7f7;
+      min-height: 100vh;
     }
+
+    .container {
+      background-color: #D9D9D9;
+      border-radius: 15px;
+      padding: 20px;
+      width: 100%;
+      max-width: 460px;
+      color: #222;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
     h1 {
       text-align: center;
+      color: #fff;
       margin-bottom: 20px;
-      color: #333;
     }
-    .customer-info {
-      background: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-    .customer-info p {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-    form {
-      background: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    form select, form input {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      flex: 1 1 120px;
-    }
-    form button {
-      padding: 10px 20px;
-      background: #007bff;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      flex: 0 0 auto;
-    }
-    form button:hover {
-      background: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background-color: #007bff;
-      color: white;
-    }
-    tbody tr:hover {
-      background-color: #f1f1f1;
-    }
-    .summary {
-      margin-top: 15px;
+
+    .status {
       font-weight: bold;
-      font-size: 18px;
-      color: #333;
+      margin-top: 10px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      display: inline-block;
     }
-    .no-payments {
-      text-align: center;
-      color: #666;
-      font-size: 18px;
+
+    .paid {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+
+    .unpaid {
+      background-color: #E53935;
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background-color: #64AD8F;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: 'Lemon', cursive, sans-serif;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-button:hover {
+      background-color: #42745f;
+    }
+
+    .history-entry {
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .history-entry span {
+      display: inline-block;
+      min-width: 100px;
     }
   </style>
 </head>
 <body>
+  <h1>Payment Details</h1>
+  <div class="container">
+    <div id="paymentDetails">Loading...</div>
 
-<h1>Customer Payment Details</h1>
+    <div style="margin-top: 20px;">
+      <h3>Enter Payment</h3>
+      <div class="form-group">
+        <label for="month">Month</label>
+        <select id="month">
+          <script>
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+              const date = new Date(0, i);
+              const m = date.toLocaleString('default', { month: 'long' });
+              document.write(`<option value="${i + 1}">${m}</option>`);
+            }
+          </script>
+        </select>
+      </div>
 
-<div class="customer-info" id="customerInfo"></div>
+      <div class="form-group">
+        <label for="year">Year</label>
+        <select id="year">
+          <script>
+            const y = new Date().getFullYear();
+            for (let i = y - 5; i <= y + 2; i++) {
+              document.write(`<option value="${i}">${i}</option>`);
+            }
+          </script>
+        </select>
+      </div>
 
-<form id="addPaymentForm">
-  <select id="paymentMonth" required>
-    <option value="">Select Month</option>
-  </select>
-  <select id="paymentYear" required>
-    <option value="">Select Year</option>
-  </select>
-  <input type="number" id="paymentAmount" placeholder="Payment Amount (₹)" min="1" required />
-  <button type="submit">Add Payment</button>
-</form>
+      <div class="form-group">
+        <label for="amount">Amount Paid</label>
+        <input type="number" id="amount" placeholder="Enter paid amount" />
+      </div>
 
-<div id="paymentsContainer"></div>
+      <button class="back-button" onclick="submitPayment()">💰 Submit Payment</button>
+    </div>
 
-<script>
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+    <div style="margin-top: 30px;">
+      <h3>Payment History</h3>
+      <div id="paymentHistory"></div>
+    </div>
+  </div>
 
-  const paymentMonth = document.getElementById('paymentMonth');
-  const paymentYear = document.getElementById('paymentYear');
-  const customerInfoDiv = document.getElementById('customerInfo');
-  const paymentsContainer = document.getElementById('paymentsContainer');
-  const addPaymentForm = document.getElementById('addPaymentForm');
+  <button class="back-button" onclick="window.history.back()">← Back</button>
 
-  // Populate dropdowns
-  monthNames.forEach((name, i) => {
-    const option = document.createElement('option');
-    option.value = i + 1;
-    option.textContent = name;
-    paymentMonth.appendChild(option);
-  });
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  const currentYear = new Date().getFullYear();
-  for (let y = currentYear; y >= currentYear - 5; y--) {
-    const option = document.createElement('option');
-    option.value = y;
-    option.textContent = y;
-    paymentYear.appendChild(option);
-  }
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD80rGSiaQD5PiFQfZokB7QueEEyORD57w",
+      authDomain: "new-customer-e3c48.firebaseapp.com",
+      projectId: "new-customer-e3c48",
+      storageBucket: "new-customer-e3c48.firebasestorage.app",
+      messagingSenderId: "76725814081",
+      appId: "1:76725814081:web:147cfb331c786efbec17c0"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-  // Load customer and payments
-  const boxno = new URLSearchParams(window.location.search).get('boxno');
-  const allCustomers = JSON.parse(localStorage.getItem('customers')) || [];
-  let allPayments = JSON.parse(localStorage.getItem('customerPayments')) || {};
-  const customer = allCustomers.find(c => c.boxno === boxno);
+    const db = firebase.database();
+    const boxno = new URLSearchParams(window.location.search).get("boxno");
+    const paymentDetails = document.getElementById("paymentDetails");
+    const paymentHistory = document.getElementById("paymentHistory");
 
-  if (!boxno || !customer) {
-    customerInfoDiv.innerHTML = `<p style="color:red; text-align:center;">Customer not found or not selected.</p>`;
-    addPaymentForm.style.display = 'none';
-  } else {
-    customerInfoDiv.innerHTML = `
-      <p><strong>Name:</strong> ${customer.name}</p>
-      <p><strong>Box Number:</strong> ${customer.boxno}</p>
-      <p><strong>Mobile:</strong> ${customer.mobile}</p>
-      <p><strong>Monthly Amount:</strong> ₹${customer.amount}</p>
-    `;
-    showPayments(boxno);
-  }
+    let dueAmount = 0;
+    let customerName = "";
 
-  addPaymentForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+    // Get customer info
+    db.ref("customers").orderByChild("boxno").equalTo(boxno).once("value", (snapshot) => {
+      if (!snapshot.exists()) {
+        paymentDetails.innerHTML = "Customer not found.";
+        return;
+      }
 
-    const month = parseInt(paymentMonth.value);
-    const year = parseInt(paymentYear.value);
-    const amount = Number(document.getElementById('paymentAmount').value);
+      snapshot.forEach((child) => {
+        const c = child.val();
+        customerName = c.name;
+        dueAmount = parseFloat(c.amount || 0);
 
-    if (!month || !year || !amount || amount <= 0) {
-      alert('Please fill all payment details correctly.');
-      return;
-    }
-
-    if (!allPayments[boxno]) {
-      allPayments[boxno] = [];
-    }
-
-    const existingIndex = allPayments[boxno].findIndex(p => p.month === month && p.year === year);
-    if (existingIndex > -1) {
-      allPayments[boxno][existingIndex].amount += amount;
-      allPayments[boxno][existingIndex].date = new Date().toISOString();
-    } else {
-      allPayments[boxno].push({
-        month,
-        year,
-        amount,
-        date: new Date().toISOString()
-      });
-    }
-
-    localStorage.setItem('customerPayments', JSON.stringify(allPayments));
-    alert(`Payment of ₹${amount} added successfully!`);
-    addPaymentForm.reset();
-    showPayments(boxno);
-  });
-
-  function showPayments(boxno) {
-    const customerPayments = allPayments[boxno] || [];
-
-    if (customerPayments.length === 0) {
-      paymentsContainer.innerHTML = `<p class="no-payments">No payments found for this customer.</p>`;
-      return;
-    }
-
-    customerPayments.sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
-
-    const monthlyAmount = Number(customer.amount);
-    const grouped = {};
-
-    customerPayments.forEach(p => {
-      const key = `${p.year}-${p.month}`;
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(p);
-    });
-
-    const orderedKeys = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
-    let carryOver = 0;
-    let grandTotal = 0;
-    let html = `
-      <table>
-        <thead>
-          <tr>
-            <th>Month-Year</th>
-            <th>Date</th>
-            <th>Paid ₹</th>
-            <th>Carry Over ₹</th>
-            <th>Balance ₹</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    orderedKeys.forEach(key => {
-      const group = grouped[key];
-      const [year, month] = key.split("-");
-      const totalPaid = group.reduce((sum, p) => sum + Number(p.amount), 0);
-      const effectiveMonthly = monthlyAmount - carryOver;
-      const balance = effectiveMonthly - totalPaid;
-      grandTotal += totalPaid;
-
-      group.forEach((p, i) => {
-        const dateAdded = new Date(p.date).toLocaleDateString();
-        html += `
-          <tr>
-            ${i === 0 ? `<td rowspan="${group.length}">${new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}</td>` : ''}
-            <td>${dateAdded}</td>
-            <td>₹${Number(p.amount).toFixed(2)}</td>
-            ${i === 0 ? `
-              <td rowspan="${group.length}">₹${carryOver.toFixed(2)}</td>
-              <td rowspan="${group.length}">₹${balance.toFixed(2)}</td>
-            ` : ''}
-          </tr>
+        paymentDetails.innerHTML = `
+          <p><strong>Name:</strong> ${customerName}</p>
+          <p><strong>Box No:</strong> ${boxno}</p>
+          <p><strong>Monthly Due:</strong> ₹${dueAmount}</p>
         `;
-      });
 
-      carryOver = balance < 0 ? Math.abs(balance) : 0;
+        loadHistory();
+      });
     });
 
-    html += `</tbody></table>`;
-    html += `<div class="summary">Total Paid: ₹${grandTotal.toFixed(2)}</div>`;
-    paymentsContainer.innerHTML = html;
-  }
-</script>
+    function loadHistory() {
+      db.ref("payments/" + boxno + "/history").once("value", (snapshot) => {
+        paymentHistory.innerHTML = "";
+        if (!snapshot.exists()) {
+          paymentHistory.innerHTML = "<p>No payment history.</p>";
+          return;
+        }
 
+        const history = snapshot.val();
+        Object.keys(history).sort().reverse().forEach((monthYear) => {
+          const p = history[monthYear];
+          paymentHistory.innerHTML += `
+            <div class="history-entry">
+              <p><strong>${monthYear}</strong></p>
+              <p><span>Paid:</span> ₹${p.amountPaid}</p>
+              <p><span>Due:</span> ₹${p.dueAmount}</p>
+              <p><span>Balance:</span> ₹${p.balance}</p>
+              <p><span>Status:</span> <span class="${p.status}">${p.status.toUpperCase()}</span></p>
+              <p><span>Date:</span> ${p.date}</p>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function submitPayment() {
+      const month = document.getElementById("month").value.padStart(2, '0');
+      const year = document.getElementById("year").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      const key = `${year}-${month}`;
+      const today = new Date().toISOString().split("T")[0];
+      const paymentRef = db.ref(`payments/${boxno}/history/${key}`);
+
+      paymentRef.once("value", (snap) => {
+        const prev = snap.val();
+        const alreadyPaid = prev?.amountPaid || 0;
+        const totalPaid = alreadyPaid + amount;
+        const balance = dueAmount - totalPaid;
+        const status = balance <= 0 ? "paid" : "unpaid";
+
+        const newData = {
+          amountPaid: totalPaid,
+          dueAmount: dueAmount,
+          balance: balance,
+          status: status,
+          date: today
+        };
+
+        paymentRef.set(newData, (err) => {
+          if (err) {
+            alert("Payment failed.");
+          } else {
+            alert("Payment recorded.");
+            document.getElementById("amount").value = "";
+            loadHistory();
+          }
+        });
+      });
+    }
+  </script>
 </body>
 </html>
