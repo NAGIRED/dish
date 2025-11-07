@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Lemon&family=Agbalumo&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family: 'Agbalumo', cursive;
+    min-height:100vh; display:flex; flex-direction:column;
+    background:url('https://wallpaperaccess.com/full/4597124.jpg') center/cover no-repeat fixed;
+    position:relative; color:#fff;
+  }
+  body::before{
+    content:""; position:absolute; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); z-index:0;
+  }
+  nav{
+    position:relative; z-index:1; width:100%;
+    background:rgba(255,255,255,0.1); backdrop-filter:blur(15px);
+    display:flex; justify-content:space-between; align-items:center;
+    padding:15px 30px; box-shadow:0 8px 20px rgba(0,0,0,0.4);
+  }
+  nav .logo{ font-family:'Lemon', cursive; font-size:28px; color:#fff; text-shadow:1px 1px 8px rgba(0,0,0,0.5);}
+  nav ul{ list-style:none; display:flex; gap:20px;}
+  nav ul li a{ text-decoration:none; color:#fff; font-weight:600; padding:8px 15px; border-radius:15px; transition:all 0.3s ease;}
+  nav ul li a:hover{ background: rgba(100,173,143,0.4); }
+  h1{ position:relative; z-index:1; font-family:'Lemon', cursive; font-size:48px; margin:30px 0 20px 0; text-align:center; text-shadow:2px 2px 10px rgba(0,0,0,0.5);}
+  .container{ position:relative; z-index:1; width:95%; max-width:1200px; background:rgba(255,255,255,0.08); backdrop-filter:blur(20px); border-radius:25px; box-shadow:0 15px 40px rgba(0,0,0,0.4); padding:30px 25px; margin-bottom:40px;}
+  table{ width:100%; border-collapse:collapse; margin-top:15px; background: rgba(255,255,255,0.08); backdrop-filter:blur(15px); border-radius:15px; overflow:hidden; position:relative; z-index:1;}
+  th,td{ padding:12px 15px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.2);}
+  th{ background: rgba(100,173,143,0.8); color:#fff; font-weight:600;}
+  tr:nth-child(even){ background: rgba(255,255,255,0.05);}
+  tr:hover{ background: rgba(100,173,143,0.15); transition: background 0.3s;}
+  .paid{ color:#4CAF50; font-weight:bold;}
+  .pending{ color:#FF5722; font-weight:bold;}
+  .back-btn{ margin-top:20px; display:inline-block; padding:10px 25px; background: rgba(255,255,255,0.2); color:#fff; border-radius:20px; text-decoration:none; font-weight:600; transition: all 0.3s ease;}
+  .back-btn:hover{ background: rgba(255,255,255,0.4);}
+  footer{ position:relative; z-index:1; width:100%; background:rgba(255,255,255,0.1); backdrop-filter:blur(15px); text-align:center; padding:15px 0; color:#fff; box-shadow:0 -8px 20px rgba(0,0,0,0.4); font-size:14px;}
+  footer a{ color:#64AD8F; text-decoration:none;}
+  footer a:hover{ text-decoration:underline;}
+  @media(max-width:768px){ h1{ font-size:36px;} table,th,td{ font-size:14px;} nav{ flex-direction:column; gap:10px;} nav ul{ flex-direction:column; gap:10px; } }
+</style>
+</head>
+<body>
+
+<!-- Menu -->
+<nav>
+  <div class="logo">PaymentTracker</div>
+  <ul>
+    <li><a href="home.html">Home</a></li>
+    <li><a href="add-customer.html">Add Customer</a></li>
+    <li><a href="allpayments.html">All Payments</a></li>
+    <li><a href="reports.html">Reports</a></li>
+  </ul>
+</nav>
+
+<h1>All Payments</h1>
+
+<div class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Box No</th>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody id="paymentsBody"></tbody>
+  </table>
+
+  <a href="home.html" class="back-btn">← Back to Home</a>
+</div>
+
+<footer>
+  &copy; 2025 PaymentTracker. All rights reserved. | Developed by <a href="#">YourName</a>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD80rGSiaQD5PiFQfZokB7QueEEyORD57w",
+  authDomain: "new-customer-e3c48.firebaseapp.com",
+  projectId: "new-customer-e3c48",
+  storageBucket: "new-customer-e3c48.firebasestorage.app",
+  messagingSenderId: "76725814081",
+  appId: "1:76725814081:web:147cfb331c786efbec17c0"
+};
+firebase.initializeApp(firebaseConfig);
+
+const paymentsRef = firebase.database().ref("payments");
+const paymentsBody = document.getElementById("paymentsBody");
+
+paymentsRef.once("value").then(snapshot => {
+    const payments = snapshot.exists() ? snapshot.val() : {};
+    paymentsBody.innerHTML = "";
+
+    for (let boxno in payments) {
+        for (let month in payments[boxno]) {
+            const payment = payments[boxno][month];
+            if (payment.status && payment.status.toLowerCase() === 'paid') {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${payment.customerName || '-'}</td>
+                                <td>${boxno}</td>
+                                <td>${month}</td>
+                                <td>${payment.amount || '-'}</td>
+                                <td class="paid">${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</td>
+                                <td>${payment.timestamp || '-'}</td>`;
+                paymentsBody.appendChild(tr);
+            }
+        }
+    }
+});
+</script>
+<script>
+
+</script>
+
+
+</body>
+</html>
